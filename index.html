@@ -76,13 +76,28 @@
           <h3 class="section-title" style="margin: 0;">Settings</h3>
           <i class="ph ph-x modal-close" id="close-settings"></i>
         </div>
-        <div class="modal-body" style="display: flex; flex-direction: column; gap: 12px;">
-          <button id="upload-btn" onclick="document.getElementById('persistent-upload').click(); document.getElementById('settings-modal').classList.remove('active');" class="settings-btn">
-            <i class="ph ph-upload-simple"></i> Upload Plan Data (.json)
-          </button>
-          <button id="clear-btn" class="settings-btn clear-btn">
-            <i class="ph ph-trash"></i> Clear Plan Data
-          </button>
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 16px;">
+          <!-- Instructions Section -->
+          <div style="padding: 12px; background: rgba(255,255,255,0.03); border-radius: 12px; border: 1px solid rgba(255,255,255,0.05);">
+            <h4 style="font-size: 0.9rem; margin-bottom: 8px; color: var(--accent-color); display: flex; align-items: center; gap: 6px;">
+              <i class="ph ph-file-pdf"></i> From PDF to App
+            </h4>
+            <p style="font-size: 0.8rem; color: var(--text-muted); line-height: 1.4;">
+              Copy your PDF text and ask ChatGPT: 
+              <span style="display: block; margin-top: 6px; padding: 6px; background: rgba(0,0,0,0.2); border-radius: 6px; font-family: monospace; color: #fff;">
+                "Convert this into a Diet Plan JSON with times and meal options."
+              </span>
+            </p>
+          </div>
+
+          <div style="display: flex; flex-direction: column; gap: 10px;">
+            <button id="upload-btn" onclick="document.getElementById('persistent-upload').click(); document.getElementById('settings-modal').classList.remove('active');" class="settings-btn">
+              <i class="ph ph-upload-simple"></i> Upload Plan Data (.json)
+            </button>
+            <button id="clear-btn" class="settings-btn clear-btn">
+              <i class="ph ph-trash"></i> Clear Existing Plan
+            </button>
+          </div>
         </div>
       </div>
     </div>

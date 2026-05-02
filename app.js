@@ -204,31 +204,90 @@ function getIconForMeal(id) {
   return "ph-bowl-food";
 }
 
+function getMealTitleByTime(hour) {
+  if (hour < 10) return "Breakfast";
+  if (hour < 12) return "Mid Morning";
+  if (hour < 15) return "Lunch";
+  if (hour < 18) return "Evening Snack";
+  return "Dinner";
+}
+
+function findMealArray(obj) {
+  if (!obj) return null;
+  if (Array.isArray(obj)) {
+    // Check if it's an array of meal-like objects
+    if (obj.length > 0 && (obj[0].time || obj[0].options || obj[0].items)) return obj;
+  }
+  if (typeof obj === 'object') {
+    for (let key in obj) {
+      const found = findMealArray(obj[key]);
+      if (found) return found;
+    }
+  }
+  return null;
+}
+
 function processMealsData() {
   mealSchedule = [];
-  for (const [key, val] of Object.entries(mealsData)) {
-    let options = [];
-    let timeStr = "12:00 PM";
-    
-    if (Array.isArray(val)) {
-       options = val;
-       if (key.includes('breakfast')) timeStr = '08:00 AM';
-       else if (key.includes('lunch')) timeStr = '01:00 PM';
-       else if (key.includes('snack')) timeStr = '05:00 PM';
-       else if (key.includes('dinner')) timeStr = '08:00 PM';
-    } else if (val && typeof val === 'object') {
-       options = val.options || [];
-       timeStr = val.time || timeStr;
-    }
 
-    mealSchedule.push({
-      id: key,
-      title: key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
-      timeStr: timeStr,
-      hour: parseTimeToHour(timeStr),
-      options: options
+  // Universal Heuristic Search: Find the meal list no matter where it's hidden or what it's called
+  const dataArray = findMealArray(mealsData);
+
+  if (dataArray && Array.isArray(dataArray)) {
+    dataArray.forEach((entry, idx) => {
+      let options = [];
+      const rawOptions = entry.options || entry.meals || entry.dishes || [];
+      
+      if (Array.isArray(rawOptions)) {
+        options = rawOptions.map(opt => {
+          if (typeof opt === 'string') return opt;
+          // Handle { dish: "...", quantity: "..." }
+          if (opt.dish) return `${opt.dish} (${opt.quantity || ''})`;
+          // Handle { items: [...] }
+          if (opt.items && Array.isArray(opt.items)) {
+            return opt.items.map(item => `${item.dish} (${item.quantity || ''})`).join(' + ');
+          }
+          return opt.name || opt.title || "Option " + (idx + 1);
+        });
+      }
+      
+      mealSchedule.push({
+        id: `meal_${idx}`,
+        title: entry.meal || entry.title || entry.name || getMealTitleByTime(parseTimeToHour(entry.time)),
+        timeStr: entry.time || "12:00 PM",
+        hour: parseTimeToHour(entry.time),
+        options: options
+      });
     });
+  } 
+  // ... (rest of the fallback logic)
+  // Original object-based format
+  else {
+    for (const [key, val] of Object.entries(mealsData)) {
+      let options = [];
+      let timeStr = "12:00 PM";
+      
+      if (Array.isArray(val)) {
+         options = val;
+         if (key.includes('breakfast')) timeStr = '08:00 AM';
+         else if (key.includes('lunch')) timeStr = '01:00 PM';
+         else if (key.includes('snack')) timeStr = '05:00 PM';
+         else if (key.includes('dinner')) timeStr = '08:00 PM';
+      } else if (val && typeof val === 'object') {
+         options = val.options || [];
+         timeStr = val.time || timeStr;
+      }
+
+      mealSchedule.push({
+        id: key,
+        title: key.split('_').map(w => w.charAt(0).toUpperCase() + w.slice(1)).join(' '),
+        timeStr: timeStr,
+        hour: parseTimeToHour(timeStr),
+        options: options
+      });
+    }
   }
+
   mealSchedule.sort((a, b) => a.hour - b.hour);
   maxMeals = mealSchedule.length;
 
@@ -240,14 +299,28 @@ function processMealsData() {
   }
 }
 
+const USER_PLAN_KEY = 'dietPlanner_userPlan';
+
 async function initData() {
   try {
+    // 1. Try loading from LocalStorage first (User's uploaded plan)
+    const savedPlan = localStorage.getItem(USER_PLAN_KEY);
+    if (savedPlan) {
+      mealsData = JSON.parse(savedPlan);
+      processMealsData();
+      return;
+    }
+
+    // 2. Fallback to default JSON file
     const res = await fetch('diet_plan.json');
-    if (!res.ok) throw new Error("Network response was not ok");
-    mealsData = await res.json();
-    processMealsData();
+    if (res.ok) {
+      mealsData = await res.json();
+      processMealsData();
+    } else {
+      renderUploadPrompt();
+    }
   } catch (e) {
-    console.warn("Fetch failed, starting offline mode.", e);
+    console.warn("Init failed", e);
     renderUploadPrompt();
   }
 }
@@ -255,37 +328,38 @@ async function initData() {
 function getCurrentMealInfo(hour) {
   if (mealSchedule.length === 0) return null;
 
-  let currentMeal = mealSchedule[0];
-  let currentIdx = 1;
+  // Find the last meal that has already passed
+  let lastPassedMeal = mealSchedule[0];
+  let lastIdx = 1;
   let found = false;
 
   for (let i = 0; i < mealSchedule.length; i++) {
-    if (i < mealSchedule.length - 1 && hour >= mealSchedule[i].hour && hour < mealSchedule[i + 1].hour) {
-      currentMeal = mealSchedule[i];
-      currentIdx = i + 1;
-      found = true;
-      break;
-    }
-  }
-
-  if (!found) {
-    const lastMeal = mealSchedule[mealSchedule.length - 1];
-    if (hour >= lastMeal.hour && hour < lastMeal.hour + 2.5) {
-      currentMeal = lastMeal;
-      currentIdx = mealSchedule.length;
+    if (hour >= mealSchedule[i].hour) {
+      lastPassedMeal = mealSchedule[i];
+      lastIdx = i + 1;
       found = true;
     }
   }
 
-  if (!found && hour < mealSchedule[0].hour) {
-    return { id: 'rest_morning', title: 'Rest & Recover', index: 0, timeStr: 'Night time', next: mealSchedule[0], options: [] };
-  }
-
+  // If we found a meal that passed today, check if it was too long ago
   if (found) {
-    return { ...currentMeal, index: currentIdx };
+    // If it's more than 4 hours after the last meal of the day, show rest state
+    if (hour > mealSchedule[mealSchedule.length - 1].hour + 4) {
+      return { id: 'rest_night', title: 'Rest & Recover', index: 0, timeStr: 'Night time', options: [] };
+    }
+    return { ...lastPassedMeal, index: lastIdx };
   }
 
-  return { id: 'rest_night', title: 'Rest & Recover', index: 0, timeStr: 'Night time', options: [] };
+  // If no meal has passed yet today (early morning)
+  if (hour < mealSchedule[0].hour) {
+     // If it's within 2 hours of the first meal, show the first meal as "Up Next"
+     if (hour >= mealSchedule[0].hour - 2) {
+       return { ...mealSchedule[0], index: 1 };
+     }
+     return { id: 'rest_morning', title: 'Rest & Recover', index: 0, timeStr: 'Night time', next: mealSchedule[0], options: [] };
+  }
+
+  return { ...mealSchedule[0], index: 1 };
 }
 
 function getGreeting(hour) {
@@ -388,13 +462,18 @@ function renderTimeline(viewedMealInfo, actualCurrentMealInfo) {
     const isViewed = meal.id === viewedMealInfo.id;
     const isActual = meal.id === (actualCurrentMealInfo && actualCurrentMealInfo.id);
 
+    let iconClass = getIconForMeal(meal.id || "");
+    if (isCompleted && !isViewed) {
+      iconClass = "ph-fill ph-check-circle";
+    }
+
     const step = document.createElement('div');
     step.className = `timeline-step ${isCompleted ? 'completed' : ''} ${isViewed ? 'active' : ''}`;
     step.style.cursor = 'pointer';
 
     step.innerHTML = `
       <div class="step-icon" style="${isActual && !isViewed ? 'box-shadow: 0 0 0 2px var(--accent-light);' : ''}">
-        <i class="ph ${getIconForMeal(meal.id)}"></i>
+        <i class="ph ${iconClass}"></i>
       </div>
       <div class="step-title">${meal.title}</div>
       <div class="step-time">${meal.timeStr}</div>
@@ -465,6 +544,7 @@ document.getElementById('clear-btn')?.addEventListener('click', () => {
   lastRenderedMealId = null;
   completedMeals.clear();
   localStorage.removeItem(IMAGE_CACHE_KEY);
+  localStorage.removeItem(USER_PLAN_KEY);
   
   document.getElementById('hero-meal-title').textContent = 'Plan Cleared';
   document.getElementById('hero-subtitle').textContent = 'Please upload a new diet plan to continue.';
@@ -485,18 +565,28 @@ document.getElementById('persistent-upload').addEventListener('change', (e) => {
   const reader = new FileReader();
   reader.onload = (ev) => {
     try {
-      mealsData = JSON.parse(ev.target.result);
+      let content = ev.target.result.trim();
+      // Auto-strip markdown code blocks (e.g. ```json ... ```)
+      if (content.startsWith('```')) {
+        content = content.replace(/^```[a-z]*\n/i, '').replace(/\n```$/, '');
+      }
+      
+      mealsData = JSON.parse(content);
       if (Object.keys(mealsData).length === 0) {
         throw new Error('Empty JSON');
       }
+
+      // Save to persistence
+      localStorage.setItem(USER_PLAN_KEY, JSON.stringify(mealsData));
       
       const btn = document.getElementById('upload-btn');
       if (btn) btn.textContent = "Plan Loaded ✓";
       
-      currentMealId = null; // force re-render
+      currentMealId = null; 
+      lastRenderedMealId = null;
       processMealsData();
     } catch (err) {
-      alert('Invalid JSON file. Please provide a valid diet plan.');
+      alert('Invalid JSON file. Ensure you didn\'t accidentally include extra text before or after the { } brackets.');
     } finally {
       e.target.value = '';
     }
