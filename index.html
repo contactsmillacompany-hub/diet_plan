@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>My Diet Plan</title>
+  <link rel="stylesheet" href="index.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+  <script src="https://unpkg.com/@phosphor-icons/web"></script>
+</head>
+
+<body>
+  <div class="app-container">
+    <!-- Top Nav -->
+    <nav class="top-nav">
+      <i class="ph ph-list nav-icon"></i>
+      <h1 class="nav-title">My Diet Plan</h1>
+      <i class="ph ph-gear nav-icon" id="settings-icon"></i>
+    </nav>
+
+    <main class="main-content">
+      <!-- Hero Section -->
+      <section class="hero-card">
+        <div class="hero-content">
+          <div class="greeting-wrapper">
+            <div class="icon-circle"><i class="ph ph-clock"></i></div>
+            <span class="greeting-text" id="greeting">Good Morning ☀️</span>
+          </div>
+          <h2 class="hero-title" id="hero-meal-title">It's Breakfast Time!</h2>
+          <p class="hero-subtitle" id="hero-subtitle">8:30 AM • Have a healthy and productive day!</p>
+        </div>
+        <img src="https://loremflickr.com/400/300/breakfast,bowl?lock=10" class="hero-image" id="hero-image" alt="Meal">
+      </section>
+
+      <!-- Options Section -->
+      <section class="options-section">
+        <div class="options-header">
+          <div>
+            <h3 class="section-title" id="options-title">Breakfast Options</h3>
+            <p class="section-subtitle">Choose one from your plan</p>
+          </div>
+          <button class="surprise-btn" id="surprise-btn">
+            <i class="ph ph-shuffle"></i> Surprise Me
+          </button>
+        </div>
+
+        <div class="cards-grid" id="cards-container">
+          <!-- Meal cards injected here -->
+        </div>
+      </section>
+
+      <!-- Tip Section -->
+      <section class="tip-section">
+        <div class="tip-content">
+          <i class="ph-fill ph-lightbulb tip-icon"></i>
+          <span class="tip-text">Drink a glass of warm water in the morning</span>
+        </div>
+        <i class="ph ph-caret-right"></i>
+      </section>
+
+      <!-- Progress Section -->
+      <section class="progress-section">
+        <h3 class="section-title">Today's Progress</h3>
+        <div class="timeline" id="timeline-container">
+          <!-- Timeline injected here -->
+        </div>
+      </section>
+      
+    </main>
+
+    <!-- Settings Modal -->
+    <div class="modal-overlay" id="settings-modal">
+      <div class="modal-content">
+        <div class="modal-header">
+          <h3 class="section-title" style="margin: 0;">Settings</h3>
+          <i class="ph ph-x modal-close" id="close-settings"></i>
+        </div>
+        <div class="modal-body" style="display: flex; flex-direction: column; gap: 12px;">
+          <button id="upload-btn" onclick="document.getElementById('persistent-upload').click(); document.getElementById('settings-modal').classList.remove('active');" class="settings-btn">
+            <i class="ph ph-upload-simple"></i> Upload Plan Data (.json)
+          </button>
+          <button id="clear-btn" class="settings-btn clear-btn">
+            <i class="ph ph-trash"></i> Clear Plan Data
+          </button>
+        </div>
+      </div>
+    </div>
+
+  </div>
+
+  <input type="file" id="persistent-upload" accept=".json" style="position: absolute; left: -9999px;">
+  <script src="app.js"></script>
+</body>
+
+</html>
