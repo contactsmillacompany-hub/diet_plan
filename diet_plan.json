@@ -1,0 +1,466 @@
+{
+"meals": [
+{
+"time": "07:00 AM",
+"options": [
+{
+"name": "Option 1",
+"items": [
+{
+"dish": "Cinnamon Water",
+"quantity": "1 glass"
+},
+{
+"dish": "Soaked Almond",
+"quantity": "5 almond"
+}
+]
+},
+{
+"name": "Option 2",
+"items": [
+{
+"dish": "Coriander Seed Water",
+"quantity": "1 glass"
+},
+{
+"dish": "Soaked Almond",
+"quantity": "5 almond"
+}
+]
+}
+]
+},
+{
+"time": "07:30 AM",
+"options": [
+{
+"name": "Option 1",
+"items": [
+{
+"dish": "Apple",
+"quantity": "1 small"
+}
+]
+},
+{
+"name": "Option 2",
+"items": [
+{
+"dish": "Pear",
+"quantity": "1 small"
+}
+]
+},
+{
+"name": "Option 3",
+"items": [
+{
+"dish": "Orange",
+"quantity": "1 large"
+}
+]
+},
+{
+"name": "Option 4",
+"items": [
+{
+"dish": "Muskmelon",
+"quantity": "1 small"
+}
+]
+}
+]
+},
+{
+"time": "09:30 AM",
+"options": [
+{
+"name": "Option 1",
+"items": [
+{
+"dish": "Brown Bread",
+"quantity": "1 slice"
+},
+{
+"dish": "Egg Vegetable Omelette",
+"quantity": "2 egg per omelette"
+}
+]
+},
+{
+"name": "Option 2",
+"items": [
+{
+"dish": "Multigrain Bread",
+"quantity": "1 slice"
+},
+{
+"dish": "Scrambled Egg with Spinach and Corn",
+"quantity": "2 egg scrambled"
+}
+]
+},
+{
+"name": "Option 3",
+"items": [
+{
+"dish": "Besan Cheela",
+"quantity": "2 cheela"
+},
+{
+"dish": "Boiled Egg",
+"quantity": "1 medium"
+},
+{
+"dish": "Ginger chutney",
+"quantity": "1 teaspoon"
+}
+]
+},
+{
+"name": "Option 4",
+"items": [
+{
+"dish": "Boiled Egg",
+"quantity": "2 large"
+},
+{
+"dish": "Rava Vegetable Upma",
+"quantity": "1 katori"
+}
+]
+},
+{
+"name": "Option 5",
+"items": [
+{
+"dish": "Coriander Chutney",
+"quantity": "1 tablespoon"
+},
+{
+"dish": "Mung Dal Cheela",
+"quantity": "2 cheela"
+}
+]
+},
+{
+"name": "Option 6",
+"items": [
+{
+"dish": "Overnight Oats with Soya Milk",
+"quantity": "1 katori"
+}
+]
+},
+{
+"name": "Option 7",
+"items": [
+{
+"dish": "Boiled Egg",
+"quantity": "1 large"
+},
+{
+"dish": "Chana Sprouts Sauteed",
+"quantity": "1 bowl"
+}
+]
+}
+]
+},
+{
+"time": "11:30 AM",
+"options": [
+{
+"name": "Option 1",
+"items": [
+{
+"dish": "Sunflower Seeds",
+"quantity": "1 tablespoon"
+},
+{
+"dish": "Chia Seed Water",
+"quantity": "1 glass"
+}
+]
+},
+{
+"name": "Option 2",
+"items": [
+{
+"dish": "Pumpkin Seeds",
+"quantity": "1 tablespoon"
+},
+{
+"dish": "Chia Seed Water",
+"quantity": "1 glass"
+}
+]
+}
+]
+},
+{
+"time": "02:00 PM",
+"options": [
+{
+"name": "Option 1",
+"items": [
+{
+"dish": "Grilled Chicken",
+"quantity": "0.5 piece"
+},
+{
+"dish": "Vegetable Pulao",
+"quantity": "2 katori"
+}
+]
+},
+{
+"name": "Option 2",
+"items": [
+{
+"dish": "Roti",
+"quantity": "2 roti/chapati"
+},
+{
+"dish": "Punjabi chole",
+"quantity": "1 katori"
+}
+]
+},
+{
+"name": "Option 3",
+"items": [
+{
+"dish": "Chicken Sandwich with Multigrain Bread",
+"quantity": "1 sandwich"
+}
+]
+},
+{
+"name": "Option 4",
+"items": [
+{
+"dish": "Roti",
+"quantity": "2 roti/chapati"
+},
+{
+"dish": "Sabzi",
+"quantity": "1 katori"
+},
+{
+"dish": "Moong Dal with Spinach",
+"quantity": "1 katori"
+}
+]
+},
+{
+"name": "Option 5",
+"items": [
+{
+"dish": "Sauteed Peas",
+"quantity": "0.5 katori"
+},
+{
+"dish": "Chicken Vegetable Pulao",
+"quantity": "2 katori"
+}
+]
+},
+{
+"name": "Option 6",
+"items": [
+{
+"dish": "Roti",
+"quantity": "2 roti/chapati"
+},
+{
+"dish": "Nutrela Curry",
+"quantity": "1 katori"
+},
+{
+"dish": "Sauteed Vegetables",
+"quantity": "1 katori"
+}
+]
+},
+{
+"name": "Option 7",
+"items": [
+{
+"dish": "Punjabi chole",
+"quantity": "1 katori"
+},
+{
+"dish": "Egg Parantha without Oil",
+"quantity": "1.5 paratha"
+}
+]
+}
+]
+},
+{
+"time": "05:30 PM",
+"options": [
+{
+"name": "Option 1",
+"items": [
+{
+"dish": "Seeds, flaxseed",
+"quantity": "2 tbsp"
+}
+]
+},
+{
+"name": "Option 2",
+"items": [
+{
+"dish": "Almonds",
+"quantity": "15 almond"
+}
+]
+},
+{
+"name": "Option 3",
+"items": [
+{
+"dish": "Makhana Roasted",
+"quantity": "1 cup"
+}
+]
+},
+{
+"name": "Option 4",
+"items": [
+{
+"dish": "Roasted Channa",
+"quantity": "3 tablespoon"
+}
+]
+}
+]
+},
+{
+"time": "08:00 PM",
+"options": [
+{
+"name": "Option 1",
+"items": [
+{
+"dish": "Sauteed Vegetables",
+"quantity": "0.5 bowl"
+},
+{
+"dish": "Chicken Tomato Rice",
+"quantity": "2 katori"
+}
+]
+},
+{
+"name": "Option 2",
+"items": [
+{
+"dish": "Roti",
+"quantity": "2 roti/chapati"
+},
+{
+"dish": "Beans Dry Sabji",
+"quantity": "1 katori"
+},
+{
+"dish": "Spinach Dal",
+"quantity": "1 katori"
+}
+]
+},
+{
+"name": "Option 3",
+"items": [
+{
+"dish": "Roti",
+"quantity": "2 roti/chapati"
+},
+{
+"dish": "Egg Curry",
+"quantity": "1 serve(1 egg + curry)"
+}
+]
+},
+{
+"name": "Option 4",
+"items": [
+{
+"dish": "Roti",
+"quantity": "1.5 roti/chapati"
+},
+{
+"dish": "Chicken Keema",
+"quantity": "1 katori"
+},
+{
+"dish": "Mixed Vegetable Salad",
+"quantity": "1 katori"
+}
+]
+},
+{
+"name": "Option 5",
+"items": [
+{
+"dish": "Chicken Kebab",
+"quantity": "2 kabab"
+},
+{
+"dish": "Mixed Lentils and Vegetable Khichdi",
+"quantity": "1 bowl"
+}
+]
+},
+{
+"name": "Option 6",
+"items": [
+{
+"dish": "Stir Fried Vegetables",
+"quantity": "1 bowl"
+},
+{
+"dish": "Vegetable Masoor Dal Dalia",
+"quantity": "1 bowl"
+}
+]
+},
+{
+"name": "Option 7",
+"items": [
+{
+"dish": "Rice",
+"quantity": "1 katori"
+},
+{
+"dish": "Rajma Curry",
+"quantity": "1 katori"
+},
+{
+"dish": "Sauteed Peas",
+"quantity": "1 katori"
+}
+]
+}
+]
+},
+{
+"time": "10:00 PM",
+"options": [
+{
+"name": "Option 1",
+"items": [
+{
+"dish": "Low Fat Milk with Turmeric and Black Pepper",
+"quantity": "0.5 glass"
+}
+]
+}
+]
+}
+]
+}

@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Simple Test</title>
+</head>
+<body>
+    <h1>JSON Processing Test</h1>
+    <div id="output"></div>
+    <script>
+        // Test the exact same processing logic
+        const testData = {
+            "schedule": [
+                {
+                    "time": "07:00 AM",
+                    "options": [
+                        {
+                            "name": "Option 1",
+                            "items": [
+                                {
+                                    "dish": "Cinnamon Water",
+                                    "quantity": "1 glass"
+                                },
+                                {
+                                    "dish": "Soaked Almond",
+                                    "quantity": "5 almonds"
+                                }
+                            ]
+                        }
+                    ]
+                }
+            ]
+        };
+
+        function processOptions(rawOptions) {
+            console.log('Processing rawOptions:', rawOptions);
+            return rawOptions.map(opt => {
+                console.log('Processing opt:', opt);
+                if (typeof opt === 'string') return opt;
+                if (opt.items && Array.isArray(opt.items)) {
+                    const result = opt.items.map(item => `${item.dish} (${item.quantity || ''})`).join(' + ');
+                    console.log('Items result:', result);
+                    return result;
+                }
+                if (opt.dish) return `${opt.dish} (${opt.quantity || ''})`;
+                return opt.name || opt.title || "Option";
+            });
+        }
+
+        // Test it
+        const meal = testData.schedule[0];
+        console.log('Meal:', meal);
+        const processedOptions = processOptions(meal.options);
+        console.log('Final processed options:', processedOptions);
+
+        // Display results
+        document.getElementById('output').innerHTML = `
+            <h2>Original Options:</h2>
+            <pre>${JSON.stringify(meal.options, null, 2)}</pre>
+            <h2>Processed Options:</h2>
+            <pre>${JSON.stringify(processedOptions, null, 2)}</pre>
+        `;
+    </script>
+</body>
+</html>

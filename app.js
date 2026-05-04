@@ -232,32 +232,40 @@ function processMealsData() {
 
   // Universal Heuristic Search: Find the meal list no matter where it's hidden or what it's called
   const dataArray = findMealArray(mealsData);
+  console.log('Found dataArray:', dataArray);
 
   if (dataArray && Array.isArray(dataArray)) {
     dataArray.forEach((entry, idx) => {
+      console.log('Processing entry:', entry);
       let options = [];
       const rawOptions = entry.options || entry.meals || entry.dishes || [];
+      console.log('Raw options:', rawOptions);
       
       if (Array.isArray(rawOptions)) {
         options = rawOptions.map(opt => {
+          console.log('Processing option:', opt);
           if (typeof opt === 'string') return opt;
+          // Handle { items: [...] } - check this first since it's more specific
+          if (opt.items && Array.isArray(opt.items)) {
+            const result = opt.items.map(item => `${item.dish} (${item.quantity || ''})`).join(' + ');
+            console.log('Items result:', result);
+            return result;
+          }
           // Handle { dish: "...", quantity: "..." }
           if (opt.dish) return `${opt.dish} (${opt.quantity || ''})`;
-          // Handle { items: [...] }
-          if (opt.items && Array.isArray(opt.items)) {
-            return opt.items.map(item => `${item.dish} (${item.quantity || ''})`).join(' + ');
-          }
           return opt.name || opt.title || "Option " + (idx + 1);
         });
       }
       
-      mealSchedule.push({
+      const meal = {
         id: `meal_${idx}`,
         title: entry.meal || entry.title || entry.name || getMealTitleByTime(parseTimeToHour(entry.time)),
         timeStr: entry.time || "12:00 PM",
         hour: parseTimeToHour(entry.time),
         options: options
-      });
+      };
+      console.log('Created meal:', meal);
+      mealSchedule.push(meal);
     });
   } 
   // ... (rest of the fallback logic)
@@ -328,6 +336,8 @@ async function initData() {
 function getCurrentMealInfo(hour) {
   if (mealSchedule.length === 0) return null;
 
+  console.log('getCurrentMealInfo called with hour:', hour, 'mealSchedule:', mealSchedule);
+
   // Find the last meal that has already passed
   let lastPassedMeal = mealSchedule[0];
   let lastIdx = 1;
@@ -345,8 +355,10 @@ function getCurrentMealInfo(hour) {
   if (found) {
     // If it's more than 4 hours after the last meal of the day, show rest state
     if (hour > mealSchedule[mealSchedule.length - 1].hour + 4) {
+      console.log('Showing rest state - too late');
       return { id: 'rest_night', title: 'Rest & Recover', index: 0, timeStr: 'Night time', options: [] };
     }
+    console.log('Found passed meal:', lastPassedMeal);
     return { ...lastPassedMeal, index: lastIdx };
   }
 
@@ -354,11 +366,15 @@ function getCurrentMealInfo(hour) {
   if (hour < mealSchedule[0].hour) {
      // If it's within 2 hours of the first meal, show the first meal as "Up Next"
      if (hour >= mealSchedule[0].hour - 2) {
+       console.log('Showing first meal as upcoming');
        return { ...mealSchedule[0], index: 1 };
      }
+     console.log('Too early, showing rest');
      return { id: 'rest_morning', title: 'Rest & Recover', index: 0, timeStr: 'Night time', next: mealSchedule[0], options: [] };
   }
 
+  // Default to first meal if nothing else matches
+  console.log('Defaulting to first meal');
   return { ...mealSchedule[0], index: 1 };
 }
 
@@ -381,6 +397,7 @@ function renderUploadPrompt() {
 }
 
 function renderCurrentMeal(mealInfo) {
+  console.log('renderCurrentMeal called with:', mealInfo);
   document.getElementById('hero-meal-title').textContent = `It's ${mealInfo.title} Time!`;
   const timeText = mealInfo.timeStr ? `${mealInfo.timeStr} • ` : '';
   document.getElementById('hero-subtitle').textContent = `${timeText}Have a healthy and productive day!`;
@@ -397,7 +414,9 @@ function renderCurrentMeal(mealInfo) {
     return;
   }
 
+  console.log('Rendering options:', mealInfo.options);
   mealInfo.options.forEach((opt, idx) => {
+    console.log('Rendering option:', opt, 'at index:', idx);
     const isSelected = idx === 0;
     if (isSelected && !completedMeals.has(mealInfo.id)) completedMeals.add(mealInfo.id);
 
@@ -405,6 +424,7 @@ function renderCurrentMeal(mealInfo) {
     card.className = `meal-card ${isSelected ? 'selected' : ''}`;
 
     const desc = getDishDescription(opt);
+    console.log('Description for', opt, ':', desc);
     
     let imgHTML = '';
     if (ImageCache.has(opt)) {
@@ -497,7 +517,9 @@ function updateUI() {
 
   document.getElementById('greeting').textContent = getGreeting(now.getHours());
 
-  const actualCurrentMealInfo = getCurrentMealInfo(currentHour);
+  // Temporarily force first meal for testing
+  const actualCurrentMealInfo = mealSchedule.length > 0 ? mealSchedule[0] : getCurrentMealInfo(currentHour);
+  console.log('Forcing first meal for testing:', actualCurrentMealInfo);
 
   if (currentMealId !== actualCurrentMealInfo.id) {
     currentMealId = actualCurrentMealInfo.id;
@@ -572,6 +594,7 @@ document.getElementById('persistent-upload').addEventListener('change', (e) => {
       }
       
       mealsData = JSON.parse(content);
+      console.log('Parsed mealsData:', mealsData);
       if (Object.keys(mealsData).length === 0) {
         throw new Error('Empty JSON');
       }

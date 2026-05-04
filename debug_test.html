@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Debug Test</title>
+</head>
+<body>
+    <h1>Debug Test</h1>
+    <div id="output"></div>
+    <script>
+        // Copy the relevant functions from app.js
+        function parseTimeToHour(timeStr) {
+            if (!timeStr) return 0;
+            const parts = timeStr.trim().split(' ');
+            if (parts.length < 2) return 0;
+            const time = parts[0];
+            const modifier = parts[1];
+            let [hours, minutes] = time.split(':');
+            hours = parseInt(hours, 10);
+            if (hours === 12) {
+                hours = modifier === 'AM' ? 0 : 12;
+            } else if (modifier === 'PM') {
+                hours += 12;
+            }
+            return hours + ((parseInt(minutes, 10) || 0) / 60);
+        }
+
+        function getMealTitleByTime(hour) {
+            if (hour < 10) return "Breakfast";
+            if (hour < 12) return "Mid Morning";
+            if (hour < 15) return "Lunch";
+            if (hour < 18) return "Evening Snack";
+            return "Dinner";
+        }
+
+        function findMealArray(obj) {
+            if (!obj) return null;
+            if (Array.isArray(obj)) {
+                if (obj.length > 0 && (obj[0].time || obj[0].options || obj[0].items)) return obj;
+            }
+            if (typeof obj === 'object') {
+                for (let key in obj) {
+                    const found = findMealArray(obj[key]);
+                    if (found) return found;
+                }
+            }
+            return null;
+        }
+
+        // Test with the actual JSON data
+        fetch('diet_plan.json')
+            .then(res => res.json())
+            .then(data => {
+                console.log('Original data:', data);
+                
+                const dataArray = findMealArray(data);
+                console.log('Found dataArray:', dataArray);
+                
+                if (dataArray && Array.isArray(dataArray)) {
+                    const mealSchedule = [];
+                    dataArray.forEach((entry, idx) => {
+                        console.log('Processing entry:', entry);
+                        let options = [];
+                        const rawOptions = entry.options || entry.meals || entry.dishes || [];
+                        console.log('Raw options:', rawOptions);
+                        
+                        if (Array.isArray(rawOptions)) {
+                            options = rawOptions.map(opt => {
+                                console.log('Processing option:', opt);
+                                if (typeof opt === 'string') return opt;
+                                if (opt.items && Array.isArray(opt.items)) {
+                                    const result = opt.items.map(item => `${item.dish} (${item.quantity || ''})`).join(' + ');
+                                    console.log('Items result:', result);
+                                    return result;
+                                }
+                                if (opt.dish) return `${opt.dish} (${opt.quantity || ''})`;
+                                return opt.name || opt.title || "Option " + (idx + 1);
+                            });
+                        }
+                        
+                        const meal = {
+                            id: `meal_${idx}`,
+                            title: entry.meal || entry.title || entry.name || getMealTitleByTime(parseTimeToHour(entry.time)),
+                            timeStr: entry.time || "12:00 PM",
+                            hour: parseTimeToHour(entry.time),
+                            options: options
+                        };
+                        console.log('Created meal:', meal);
+                        mealSchedule.push(meal);
+                    });
+                    
+                    console.log('Final mealSchedule:', mealSchedule);
+                    
+                    // Display results
+                    const output = document.getElementById('output');
+                    output.innerHTML = '<h2>Results:</h2><pre>' + JSON.stringify(mealSchedule, null, 2) + '</pre>';
+                } else {
+                    document.getElementById('output').innerHTML = '<h2>Error: Could not find meal array</h2>';
+                }
+            })
+            .catch(err => {
+                console.error('Error:', err);
+                document.getElementById('output').innerHTML = '<h2>Error: ' + err.message + '</h2>';
+            });
+    </script>
+</body>
+</html>
